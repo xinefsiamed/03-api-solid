@@ -3,10 +3,10 @@ import { UsersRepository } from '../users-repository'
 import { randomUUID } from 'node:crypto'
 
 export class InMemoryUsersRepository implements UsersRepository {
-  public users: User[] = []
+  public items: User[] = []
 
   async findById(id: string) {
-    const user = await this.users.find((user) => user.id === id)
+    const user = await this.items.find((user) => user.id === id)
 
     if (!user) {
       return null
@@ -16,7 +16,7 @@ export class InMemoryUsersRepository implements UsersRepository {
   }
 
   async findByEmail(email: string) {
-    const user = await this.users.find((user) => user.email === email)
+    const user = await this.items.find((user) => user.email === email)
 
     if (!user) {
       return null
@@ -34,7 +34,7 @@ export class InMemoryUsersRepository implements UsersRepository {
       created_at: new Date(),
     }
 
-    await this.users.push(user)
+    await this.items.push(user)
 
     return user
   }
