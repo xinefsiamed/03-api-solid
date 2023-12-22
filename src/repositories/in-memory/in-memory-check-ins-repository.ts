@@ -1,29 +1,29 @@
-import { CheckIn, Prisma } from '@prisma/client'
-import { CheckInsRepository } from '../check-ins-repository'
-import { randomUUID } from 'node:crypto'
-import dayjs from 'dayjs'
+import { CheckIn, Prisma } from "@prisma/client";
+import { CheckInsRepository } from "../check-ins-repository";
+import { randomUUID } from "node:crypto";
+import dayjs from "dayjs";
 
 export class InMemoryCheckInsRepository implements CheckInsRepository {
-  public items: CheckIn[] = []
+  public items: CheckIn[] = [];
 
   async findByUserIdOnDate(user_id: string, date: Date) {
-    const startOfTheDay = dayjs(date).startOf('date')
-    const endOfTheDay = dayjs(date).endOf('date')
+    const startOfTheDay = dayjs(date).startOf("date");
+    const endOfTheDay = dayjs(date).endOf("date");
 
     const checkInOnSameDate = this.items.find((checkIn) => {
-      const checkInDate = dayjs(checkIn.created_at)
+      const checkInDate = dayjs(checkIn.created_at);
 
       const isOnSameDate =
-        checkInDate.isAfter(startOfTheDay) && checkInDate.isBefore(endOfTheDay)
+        checkInDate.isAfter(startOfTheDay) && checkInDate.isBefore(endOfTheDay);
 
-      return checkIn.user_id === user_id && isOnSameDate
-    })
+      return checkIn.user_id === user_id && isOnSameDate;
+    });
 
     if (!checkInOnSameDate) {
-      return null
+      return null;
     }
 
-    return checkInOnSameDate
+    return checkInOnSameDate;
   }
 
   async create(data: Prisma.CheckInUncheckedCreateInput) {
@@ -33,20 +33,20 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
       gym_id: data.gym_id,
       validated_at: data.validated_at ? new Date(data.validated_at) : null,
       created_at: new Date(),
-    }
+    };
 
-    this.items.push(checkIn)
+    this.items.push(checkIn);
 
-    return checkIn
+    return checkIn;
   }
 
   async findManyByid(userId: string, page: number) {
     return this.items
       .filter((item) => item.user_id === userId)
-      .slice((page - 1) * 20, page * 20)
+      .slice((page - 1) * 20, page * 20);
   }
 
   async countByUserId(userId: string): Promise<number> {
-    return this.items.filter((item) => item.user_id === userId).length
+    return this.items.filter((item) => item.user_id === userId).length;
   }
 }
